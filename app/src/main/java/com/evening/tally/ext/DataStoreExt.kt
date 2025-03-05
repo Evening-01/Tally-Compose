@@ -18,7 +18,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.io.IOException
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "first_launch")
 
 val Context.isFirstLaunch: Boolean
     get() = this.dataStore.get(DataStoreKeys.IsFirstLaunch) ?: true

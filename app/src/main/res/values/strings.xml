@@ -80,4 +80,6 @@
     <string name="browse_tos_tips">查看《<i><u>服务条款与隐私政策</u></i>》</string>
     <string name="agree">同意</string>
     <string name="whole_word_search">全</string>
+    <string name="welcome">Welcome</string>
+    <string name="nav_host_controller_not_found">nav host controller not found</string>
 </resources>

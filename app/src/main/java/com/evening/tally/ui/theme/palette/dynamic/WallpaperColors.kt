@@ -6,7 +6,7 @@
  * @modifier Ashinch
  */
 
-package com.ldlywt.memo.theme.palette.dynamic
+package com.evening.tally.ui.theme.palette.dynamic
 
 import android.app.WallpaperManager
 import android.os.Build

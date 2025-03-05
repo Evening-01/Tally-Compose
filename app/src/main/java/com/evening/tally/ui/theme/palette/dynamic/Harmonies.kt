@@ -5,7 +5,7 @@
  * @author Kyant0
  */
 
-package com.ldlywt.memo.theme.palette.dynamic
+package com.evening.tally.ui.theme.palette.dynamic
 
 import com.evening.tally.ui.theme.palette.colorspace.zcam.Zcam
 import kotlin.math.abs
