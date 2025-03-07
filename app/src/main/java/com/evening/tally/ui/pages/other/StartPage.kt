@@ -33,7 +33,7 @@ import com.evening.tally.ext.string
 import com.evening.tally.ui.component.DisplayText
 import com.evening.tally.ui.component.DynamicSVGImage
 import com.evening.tally.ui.component.RYScaffold
-import com.evening.tally.ui.pages.common.Route
+import com.evening.tally.ui.common.Route
 import com.evening.tally.ui.svg.SVGString
 import com.evening.tally.ui.svg.WELCOME
 import com.ireward.htmlcompose.HtmlText

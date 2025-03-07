@@ -1,4 +1,4 @@
-package com.evening.tally.ui.pages.component
+package com.evening.tally.ui.pages.component.setting
 
 import android.view.SoundEffectConstants
 import androidx.compose.foundation.background

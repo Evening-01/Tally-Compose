@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-import com.evening.tally.ui.pages.common.HomeEntry
+import com.evening.tally.ui.common.HomeEntry
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

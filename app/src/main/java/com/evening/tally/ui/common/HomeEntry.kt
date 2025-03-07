@@ -1,4 +1,4 @@
-package com.evening.tally.ui.pages.common
+package com.evening.tally.ui.common
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -28,8 +28,10 @@ import com.evening.tally.ext.string
 import com.evening.tally.ui.component.animatedComposable
 import com.evening.tally.ui.component.bottomNavScreenList
 import com.evening.tally.ui.pages.other.StartPage
-import com.evening.tally.ui.pages.screens.DataScreen
-import com.evening.tally.ui.pages.screens.SettingScreen
+import com.evening.tally.ui.pages.setting.ColorAndStylePage
+import com.evening.tally.ui.pages.setting.DarkThemePage
+import com.evening.tally.ui.screens.DataScreen
+import com.evening.tally.ui.screens.SettingScreen
 import com.evening.tally.ui.theme.AppTheme
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -120,6 +122,14 @@ fun NavHostContainer(
 
         composable(Route.SETTING) {
             SettingScreen(navController = navController)
+        }
+
+        // App 颜色及样式
+        animatedComposable(route = Route.COLOR_AND_STYLE) {
+            ColorAndStylePage(navController)
+        }
+        animatedComposable(route = Route.DARK_THEME) {
+            DarkThemePage(navController)
         }
     }
 }

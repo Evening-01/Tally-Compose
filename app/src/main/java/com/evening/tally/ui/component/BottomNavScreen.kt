@@ -6,7 +6,7 @@ import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.evening.tally.R
-import com.evening.tally.ui.pages.common.Route
+import com.evening.tally.ui.common.Route
 
 sealed class Screen(val route: String, @StringRes val stringId: Int, val imageId: ImageVector) {
     object Data : Screen(Route.DATA, R.string.nav_data, Icons.Filled.List)

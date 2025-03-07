@@ -1,4 +1,4 @@
-package com.evening.tally.ui.pages.screens
+package com.evening.tally.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -25,7 +25,8 @@ import com.evening.tally.R
 import com.evening.tally.ext.showToast
 import com.evening.tally.ext.string
 import com.evening.tally.ui.component.RYScaffold
-import com.evening.tally.ui.pages.component.SelectableSettingGroupItem
+import com.evening.tally.ui.common.Route
+import com.evening.tally.ui.pages.component.setting.SelectableSettingGroupItem
 
 @Composable
 fun SettingScreen(
@@ -64,10 +65,9 @@ fun SettingsPreferenceScreen(navController: NavHostController) {
                     desc = stringResource(R.string.color_and_style_desc),
                     icon = Icons.Outlined.Palette,
                 ) {
-//                    navController.navigate(RouteName.COLOR_AND_STYLE) {
-//                        launchSingleTop = true
-//                    }
-                    showToast("颜色与样式功能暂未实现")
+                    navController.navigate(Route.COLOR_AND_STYLE) {
+                        launchSingleTop = true
+                    }
                 }
             }
 

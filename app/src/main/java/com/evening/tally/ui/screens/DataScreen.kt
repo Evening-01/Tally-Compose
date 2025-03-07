@@ -1,4 +1,4 @@
-package com.evening.tally.ui.pages.screens
+package com.evening.tally.ui.screens
 
 import android.widget.Toast
 import androidx.compose.material.icons.Icons

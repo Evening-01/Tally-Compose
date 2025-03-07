@@ -1,4 +1,4 @@
-package com.evening.tally.ui.pages.common
+package com.evening.tally.ui.common
 
 object Route {
     const val START = "start"
