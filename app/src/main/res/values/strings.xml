@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">TallyBook</string>
-    <string name="search">搜索</string>
+
     <string name="back">返回</string>
     <string name="memos">灵感</string>
-    <string name="new_memo">新灵感</string>
     <string name="compose">新建</string>
     <string name="remove">删除</string>
     <string name="resources">资源</string>
@@ -82,4 +81,9 @@
     <string name="whole_word_search">全</string>
     <string name="welcome">Welcome</string>
     <string name="nav_host_controller_not_found">nav host controller not found</string>
+
+    <string name="nav_data">数据</string>
+    <string name="nav_setting">设置</string>
+    <string name="search">搜索</string>
+    <string name="add_new_one">添加新的记录</string>
 </resources>

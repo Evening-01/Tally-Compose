@@ -5,7 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -19,13 +19,12 @@ import com.evening.tally.ui.component.RYScaffold
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DataScreen(
-) {
+fun DataScreen() {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     RYScaffold(
-        title = stringResource(id = R.string.memo),
+        title = stringResource(id = R.string.nav_data),
         actions = {
             IconButton(
                 onClick = {
@@ -39,16 +38,19 @@ fun DataScreen(
             }
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
+            FloatingActionButton(
                 onClick = {
                     Toast.makeText(
                         context,
                         "Add new memo",
                         Toast.LENGTH_SHORT
                     ).show()
-                },
-                text = { Text(R.string.new_memo.string) },
-                icon = { Icon(Icons.Filled.Add, contentDescription = R.string.compose.string) })
+                }) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = R.string.add_new_one.string
+                )
+            }
         },
         content = {
             Text(text = "DataScreen")

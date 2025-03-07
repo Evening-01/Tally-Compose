@@ -117,8 +117,9 @@ fun NavHostContainer(
         composable(Route.DATA) {
             DataScreen()
         }
+
         composable(Route.SETTING) {
-            SettingScreen()
+            SettingScreen(navController = navController)
         }
     }
 }
