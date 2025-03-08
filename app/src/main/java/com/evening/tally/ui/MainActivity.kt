@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
+import com.evening.tally.data.preference.SettingsProvider
 import com.evening.tally.ui.common.HomeEntry
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -16,10 +17,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-//            SettingsProvider {
-//                HomeEntry()
-//            }
-            HomeEntry()
+            SettingsProvider {
+                HomeEntry()
+            }
         }
     }
 }

@@ -24,8 +24,8 @@ import androidx.navigation.NavHostController
 import com.evening.tally.R
 import com.evening.tally.ext.showToast
 import com.evening.tally.ext.string
-import com.evening.tally.ui.component.RYScaffold
 import com.evening.tally.ui.common.Route
+import com.evening.tally.ui.component.RYScaffold
 import com.evening.tally.ui.pages.component.setting.SelectableSettingGroupItem
 
 @Composable

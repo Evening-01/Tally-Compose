@@ -37,6 +37,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -89,7 +90,7 @@ fun ColorAndStylePage(
     val scope = rememberCoroutineScope()
 
     val wallpaperTonalPalettes = extractTonalPalettesFromUserWallpaper()
-    var radioButtonSelected by remember { mutableStateOf(if (themeIndex > 4) 0 else 1) }
+    var radioButtonSelected by remember { mutableIntStateOf(if (themeIndex > 4) 0 else 1) }
     var fontsDialogVisible by remember { mutableStateOf(false) }
 
 
