@@ -1,4 +1,4 @@
-package com.evening.tally.ui.pages.setting
+package com.evening.tally.ui.pages.fragment
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets

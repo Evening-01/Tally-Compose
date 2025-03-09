@@ -1,4 +1,4 @@
-package com.evening.tally.ui.pages.setting
+package com.evening.tally.ui.pages.fragment
 
 import android.content.Context
 import android.os.Build

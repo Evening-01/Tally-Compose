@@ -86,4 +86,19 @@
     <string name="nav_setting">设置</string>
     <string name="search">搜索</string>
     <string name="add_new_one">添加新的记录</string>
+
+    <!-- 标题配置 -->
+    <string name="header_1">直径</string>
+    <string name="header_2">壁厚</string>
+    <string name="header_3">长度</string>
+    <string name="header_4">每捆支数</string>
+    <string name="header_5">单捆重量</string>
+    <string name="header_6">总捆数</string>
+    <string name="header_7">总支数</string>
+    <string name="header_8">总重量</string>
+    <string name="header_9">开票价</string>
+    <string name="header_10">总金额</string>
+    <string name="header_date">日期</string>
+    <string name="header_order">单号</string>
+    <string name="empty_state_message">暂无数据</string>
 </resources>

@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -27,12 +28,13 @@ import com.evening.tally.ext.isFirstLaunch
 import com.evening.tally.ext.string
 import com.evening.tally.ui.component.animatedComposable
 import com.evening.tally.ui.component.bottomNavScreenList
+import com.evening.tally.ui.pages.fragment.ColorAndStylePage
+import com.evening.tally.ui.pages.fragment.DarkThemePage
 import com.evening.tally.ui.pages.other.StartPage
-import com.evening.tally.ui.pages.setting.ColorAndStylePage
-import com.evening.tally.ui.pages.setting.DarkThemePage
 import com.evening.tally.ui.screens.DataScreen
 import com.evening.tally.ui.screens.SettingScreen
 import com.evening.tally.ui.theme.AppTheme
+import com.evening.tally.viewmodel.AccountingViewModel
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -117,7 +119,8 @@ fun NavHostContainer(
             StartPage(navController)
         }
         composable(Route.DATA) {
-            DataScreen()
+            val viewModel: AccountingViewModel = hiltViewModel()
+            DataScreen(viewModel = viewModel)
         }
 
         composable(Route.SETTING) {

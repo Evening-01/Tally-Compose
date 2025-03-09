@@ -1,6 +1,5 @@
 package com.evening.tally.ui.pages.other
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -29,11 +28,12 @@ import com.evening.tally.R
 import com.evening.tally.ext.DataStoreKeys
 import com.evening.tally.ext.dataStore
 import com.evening.tally.ext.put
+import com.evening.tally.ext.showToast
 import com.evening.tally.ext.string
+import com.evening.tally.ui.common.Route
 import com.evening.tally.ui.component.DisplayText
 import com.evening.tally.ui.component.DynamicSVGImage
 import com.evening.tally.ui.component.RYScaffold
-import com.evening.tally.ui.common.Route
 import com.evening.tally.ui.svg.SVGString
 import com.evening.tally.ui.svg.WELCOME
 import com.ireward.htmlcompose.HtmlText
@@ -76,7 +76,7 @@ fun StartPage(
                 item {
                     TextButton(
                         modifier = Modifier.padding(horizontal = 12.dp),
-                        onClick = { Toast.makeText(context, "测试", Toast.LENGTH_SHORT).show() }
+                        onClick = { showToast("测试") }
                     ) {
                         HtmlText(
                             text = stringResource(R.string.browse_tos_tips),
