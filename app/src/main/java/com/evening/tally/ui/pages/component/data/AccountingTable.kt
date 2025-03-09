@@ -22,6 +22,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,7 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.evening.tally.R
 import com.evening.tally.viewmodel.AccountingViewModel
-
 
 @Composable
 fun AccountingTable(
@@ -73,6 +73,7 @@ fun AccountingTable(
         }
     }
 }
+
 @Composable
 private fun HeaderRow(
     scrollState: ScrollState,
@@ -136,7 +137,10 @@ private fun DataRow(
             .background(backgroundColor)
             .combinedClickable(
                 interactionSource = interactionSource,
-                indication = null,
+                indication = ripple(
+                    bounded = true,
+                    color = MaterialTheme.colorScheme.primary
+                ),
                 onClick = onItemClick,
                 onLongClick = onLongPress
             )
@@ -144,7 +148,6 @@ private fun DataRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // 选中状态指示器
-
         if (showCheckbox) {
             Checkbox(
                 checked = selected,
@@ -158,7 +161,6 @@ private fun DataRow(
                 )
             )
         }
-
 
         // 数据单元格
         listOf(
@@ -200,9 +202,7 @@ private fun HeaderCell(
 private fun DataCell(value: String) {
     Text(
         text = value,
-        modifier = Modifier
-            .width(120.dp)
-            .padding(horizontal = 8.dp),
+        modifier = Modifier.width(120.dp),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurface
     )
