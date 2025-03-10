@@ -77,10 +77,9 @@ fun SettingsPreferenceScreen(navController: NavHostController) {
                     desc = stringResource(R.string.local_data_manager_desc),
                     icon = Icons.Outlined.DataUsage,
                 ) {
-//                    navController.navigate(RouteName.DATA_LOCAL_MANAGER) {
-//                        launchSingleTop = true
-//                    }
-                    showToast("数据备份与恢复功能暂未实现")
+                    navController.navigate(Route.DATA_LOCAL_MANAGER) {
+                        launchSingleTop = true
+                    }
                 }
             }
 

@@ -30,6 +30,7 @@ import com.evening.tally.ui.component.animatedComposable
 import com.evening.tally.ui.component.bottomNavScreenList
 import com.evening.tally.ui.pages.fragment.ColorAndStylePage
 import com.evening.tally.ui.pages.fragment.DarkThemePage
+import com.evening.tally.ui.pages.fragment.DataLocalManagerPage
 import com.evening.tally.ui.pages.other.StartPage
 import com.evening.tally.ui.screens.DataScreen
 import com.evening.tally.ui.screens.SettingScreen
@@ -108,6 +109,7 @@ fun NavHostContainer(
     navController: NavHostController, padding: PaddingValues
 ) {
     val context = LocalContext.current
+    val viewModel: AccountingViewModel = hiltViewModel()
     AnimatedNavHost(
         navController,
         startDestination = if (context.isFirstLaunch) Route.START else Route.DATA,
@@ -119,12 +121,16 @@ fun NavHostContainer(
             StartPage(navController)
         }
         composable(Route.DATA) {
-            val viewModel: AccountingViewModel = hiltViewModel()
+
             DataScreen(viewModel = viewModel)
         }
 
         composable(Route.SETTING) {
             SettingScreen(navController = navController)
+        }
+
+        animatedComposable(Route.DATA_LOCAL_MANAGER) {
+            DataLocalManagerPage(navController = navController, viewModel = viewModel)
         }
 
         // App 颜色及样式
