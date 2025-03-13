@@ -10,11 +10,8 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.DataUsage
 import androidx.compose.material.icons.outlined.Palette
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,8 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.evening.tally.R
-import com.evening.tally.ext.showToast
-import com.evening.tally.ext.string
 import com.evening.tally.ui.common.Route
 import com.evening.tally.ui.component.RYScaffold
 import com.evening.tally.ui.pages.component.setting.SelectableSettingGroupItem
@@ -34,14 +29,6 @@ fun SettingScreen(
 ) {
     RYScaffold(
         title = stringResource(id = R.string.nav_setting),
-        actions = {
-            IconButton(
-                onClick = {
-                    showToast("todo")
-                }) {
-                Icon(Icons.Filled.Search, contentDescription = R.string.search.string)
-            }
-        },
         content = {
             SettingsPreferenceScreen(navController)
         }

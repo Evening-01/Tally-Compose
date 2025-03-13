@@ -1,12 +1,13 @@
 package com.evening.tally.ui.screens
 
-import android.widget.Toast
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.evening.tally.R
+import com.evening.tally.ext.showToast
 import com.evening.tally.ext.string
 import com.evening.tally.ui.component.RYScaffold
 import com.evening.tally.ui.pages.component.data.AccountingTable
@@ -38,6 +40,7 @@ import com.evening.tally.viewmodel.AccountingViewModel
 fun DataScreen(viewModel: AccountingViewModel) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var showConfirmDialog by remember { mutableStateOf(false) }
+    var showSortDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     val title = when {
@@ -52,25 +55,26 @@ fun DataScreen(viewModel: AccountingViewModel) {
 
         actions = {
 
-                if (state.selectedIds.isNotEmpty()) {
-                    IconButton(
-                        onClick = { showConfirmDialog = true }
-                    ) {
-                        Icon(Icons.Default.Delete, "删除")
-                    }
-                } else {
-                    IconButton(
-                        onClick = { viewModel.toggleFilterSheet(true) }
-                    ) {
-                        Icon(Icons.Default.ArrowDropDown, "筛选")
-                    }
+            if (state.selectedIds.isNotEmpty()) {
+                IconButton(
+                    onClick = { showConfirmDialog = true }
+                ) {
+                    Icon(Icons.Default.Delete, "删除")
                 }
+            } else {
+                IconButton(
+//                    onClick = { viewModel.toggleFilterSheet(true) }
+                    onClick = { showSortDialog = true }
+                ) {
+                    Icon(Icons.Default.FilterList, "筛选")
+                }
+            }
         },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
 
-                        viewModel.toggleAddDialog(true)
+                    viewModel.toggleAddDialog(true)
 
                 }) {
                 Icon(
@@ -80,6 +84,7 @@ fun DataScreen(viewModel: AccountingViewModel) {
             }
         },
         content = {
+
             DataLazyColumn(viewModel)
 
             if (showConfirmDialog) {
@@ -91,7 +96,7 @@ fun DataScreen(viewModel: AccountingViewModel) {
                         TextButton(
                             onClick = {
                                 viewModel.deleteSelected()
-                                Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show()
+                                showToast("删除成功")
                                 showConfirmDialog = false
                             }
                         ) {
@@ -109,7 +114,49 @@ fun DataScreen(viewModel: AccountingViewModel) {
                     textContentColor = MaterialTheme.colorScheme.onSurface
                 )
             }
+
+            if (showSortDialog) {
+                SortDialog(
+                    onDismiss = { showSortDialog = false },
+                    onSortSelected = { sortType ->
+                        viewModel.applySort(sortType)
+                        showSortDialog = false
+                    }
+                )
+            }
         })
+}
+
+@Composable
+fun SortDialog(
+    onDismiss: () -> Unit,
+    onSortSelected: (AccountingViewModel.SortType) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("选择排序方式") },
+        text = {
+            Column {
+                TextButton(onClick = { onSortSelected(AccountingViewModel.SortType.DATE_ASC) }) {
+                    Text("按时间升序")
+                }
+                TextButton(onClick = { onSortSelected(AccountingViewModel.SortType.DATE_DESC) }) {
+                    Text("按时间降序")
+                }
+                TextButton(onClick = { onSortSelected(AccountingViewModel.SortType.AMOUNT_ASC) }) {
+                    Text("按金额升序")
+                }
+                TextButton(onClick = { onSortSelected(AccountingViewModel.SortType.AMOUNT_DESC) }) {
+                    Text("按金额降序")
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("关闭")
+            }
+        }
+    )
 }
 
 @Composable
@@ -126,23 +173,25 @@ fun DataLazyColumn(
     ) {
 
 
-        when {
-            uiState.isLoading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
-            uiState.items.isEmpty() -> EmptyState()
-            else -> AccountingTable(
-                items = uiState.items,
-                selectedIds = uiState.selectedIds,
-                onItemClick = { item ->
-                    if (uiState.selectedIds.isEmpty()) {
-                        // 进入编辑逻辑
-                    } else {
+        Crossfade(targetState = uiState.items, label = "动画") { targetItems ->
+            when {
+                uiState.isLoading -> CircularProgressIndicator(Modifier.align(Alignment.Center))
+                targetItems.isEmpty() -> EmptyState()
+                else -> AccountingTable(
+                    items = targetItems,
+                    selectedIds = uiState.selectedIds,
+                    onItemClick = { item ->
+                        if (uiState.selectedIds.isEmpty()) {
+                            // 进入编辑逻辑
+                        } else {
+                            viewModel.toggleSelection(item.id)
+                        }
+                    },
+                    onLongClick = { item ->
                         viewModel.toggleSelection(item.id)
                     }
-                },
-                onLongClick = { item ->
-                    viewModel.toggleSelection(item.id)
-                }
-            )
+                )
+            }
         }
 
 

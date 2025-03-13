@@ -26,6 +26,9 @@ import com.evening.tally.ui.component.Subtitle
 import com.evening.tally.ui.pages.component.setting.SettingItem
 import com.evening.tally.ui.theme.palette.onLight
 import com.evening.tally.viewmodel.AccountingViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun DataLocalManagerPage(
@@ -33,6 +36,9 @@ fun DataLocalManagerPage(
     viewModel: AccountingViewModel
 ) {
     val context = LocalContext.current
+
+    val dateFormat = SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault())
+    val formattedDate = dateFormat.format(Date())
 
     val exportLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/json")
@@ -76,7 +82,7 @@ fun DataLocalManagerPage(
                     title = stringResource(R.string.json_export),
                     desc = stringResource(R.string.json_export_summary),
                     onClick = {
-                        exportLauncher.launch("counter_backup.json")
+                        exportLauncher.launch("counter_$formattedDate.json")
                     },
                 ) {}
             }

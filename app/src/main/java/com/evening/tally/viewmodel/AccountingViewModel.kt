@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -63,7 +64,7 @@ class AccountingViewModel @Inject constructor(
     data class FilterState(
         val startDate: Date = Date(System.currentTimeMillis() - 7 * 24 * 3600 * 1000L),
         val endDate: Date = Date(),
-        val sortType: SortType = SortType.DATE_DESC,
+        val sortType: SortType = SortType.DATE_DESC, // 默认按时间倒序
         val orderNumberQuery: String = ""
     )
 
@@ -92,8 +93,7 @@ class AccountingViewModel @Inject constructor(
                 .collect { items ->
                     _uiState.update {
                         it.copy(
-//                            items = processFilter(items),
-                            items = items,
+                            items = applySortToItems(items),
                             isLoading = false
                         )
                     }
@@ -155,10 +155,35 @@ class AccountingViewModel @Inject constructor(
         }
     }
 
-    // 应用筛选条件
-    fun applyFilter(filter: FilterState) {
-        _uiState.update { it.copy(filter = filter) }
-        loadItems()
+    fun applySort(sortType: SortType) {
+        // 异步执行排序操作
+        viewModelScope.launch(Dispatchers.Default) {
+            val sortedItems = when (sortType) {
+                SortType.DATE_ASC -> _uiState.value.items.sortedBy { it.date }
+                SortType.DATE_DESC -> _uiState.value.items.sortedByDescending { it.date }
+                SortType.AMOUNT_ASC -> _uiState.value.items.sortedBy { it.totalAmount }
+                SortType.AMOUNT_DESC -> _uiState.value.items.sortedByDescending { it.totalAmount }
+            }
+            // 切换到主线程更新 UI
+            withContext(Dispatchers.Main) {
+                _uiState.value = _uiState.value.copy(items = sortedItems)
+            }
+        }
+    }
+
+    private fun applySortToItems(items: List<UiModel>): List<UiModel> {
+        return when (_uiState.value.filter.sortType) {
+            SortType.DATE_ASC -> items.sortedBy { parseDate(it.date) }
+            SortType.DATE_DESC -> items.sortedByDescending { parseDate(it.date) }
+            SortType.AMOUNT_ASC -> items.sortedBy {
+                // 处理金额字符串，去掉 "¥" 符号，并转为 Double
+                it.totalAmount.replace("¥", "").toDoubleOrNull() ?: 0.0
+            }
+            SortType.AMOUNT_DESC -> items.sortedByDescending {
+                // 处理金额字符串，去掉 "¥" 符号，并转为 Double
+                it.totalAmount.replace("¥", "").toDoubleOrNull() ?: 0.0
+            }
+        }
     }
 
     // 显示/隐藏对话框
