@@ -2,13 +2,14 @@ package com.evening.tally.viewmodel
 
 import android.content.Context
 import android.net.Uri
-import android.widget.Toast
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.evening.tally.data.entity.AccountingItem
+import com.evening.tally.ext.showToast
 import com.evening.tally.repository.AccountingRepository
-
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +26,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AccountingViewModel @Inject constructor(
-    private val repository: AccountingRepository
+    private val repository: AccountingRepository,
+    @ApplicationContext private val context: Context // 注入 Context
 ) : ViewModel() {
 
     // UI 状态统一管理
@@ -33,12 +35,12 @@ class AccountingViewModel @Inject constructor(
         val items: List<UiModel> = emptyList(),
         val isLoading: Boolean = true,
         val selectedIds: Set<Long> = emptySet(),
-        val filter: FilterState = FilterState(),
         val errorMessage: String? = null,
         val showAddDialog: Boolean = false,
         val showDatePicker: Boolean = false,
         val showFilterSheet: Boolean = false,
-        val selectedDate: Long = System.currentTimeMillis()
+        val selectedDate: Long = System.currentTimeMillis(),
+        val selectedSortType: SortType = SortType.DATE_DESC
     )
 
     private val _uiState = MutableStateFlow(UiState())
@@ -61,20 +63,14 @@ class AccountingViewModel @Inject constructor(
         val totalAmount: String
     )
 
-    data class FilterState(
-        val startDate: Date = Date(System.currentTimeMillis() - 7 * 24 * 3600 * 1000L),
-        val endDate: Date = Date(),
-        val sortType: SortType = SortType.DATE_DESC, // 默认按时间倒序
-        val orderNumberQuery: String = ""
-    )
-
     enum class SortType { DATE_ASC, DATE_DESC, AMOUNT_ASC, AMOUNT_DESC }
 
     init {
+        val initialSortType = getPersistedSortType(context)
+        _uiState.update { it.copy(selectedSortType = initialSortType) }
         loadItems()
     }
 
-    /* 状态操作方法示例 */
     // 加载数据
     private fun loadItems() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -117,9 +113,6 @@ class AccountingViewModel @Inject constructor(
         _uiState.update { it.copy(showDatePicker = show) }
     }
 
-    fun toggleFilterSheet(show: Boolean) {
-        _uiState.value = _uiState.value.copy(showFilterSheet = show)
-    }
 
     fun setErrorMessage(message: String?) {
         _uiState.update { it.copy(errorMessage = message) }
@@ -145,7 +138,6 @@ class AccountingViewModel @Inject constructor(
         }
     }
 
-
     // 删除选中项
     fun deleteSelected() {
         viewModelScope.launch {
@@ -155,7 +147,11 @@ class AccountingViewModel @Inject constructor(
         }
     }
 
+    // 更新排序方式
     fun applySort(sortType: SortType) {
+        persistSortType(sortType) // 持久化保存
+        _uiState.update { it.copy(selectedSortType = sortType) } // 更新 UI 状态
+
         // 异步执行排序操作
         viewModelScope.launch(Dispatchers.Default) {
             val sortedItems = when (sortType) {
@@ -171,16 +167,16 @@ class AccountingViewModel @Inject constructor(
         }
     }
 
+
+    // 根据 FilterState 中的 sortType 进行排序
     private fun applySortToItems(items: List<UiModel>): List<UiModel> {
-        return when (_uiState.value.filter.sortType) {
+        return when (_uiState.value.selectedSortType) {
             SortType.DATE_ASC -> items.sortedBy { parseDate(it.date) }
             SortType.DATE_DESC -> items.sortedByDescending { parseDate(it.date) }
             SortType.AMOUNT_ASC -> items.sortedBy {
-                // 处理金额字符串，去掉 "¥" 符号，并转为 Double
                 it.totalAmount.replace("¥", "").toDoubleOrNull() ?: 0.0
             }
             SortType.AMOUNT_DESC -> items.sortedByDescending {
-                // 处理金额字符串，去掉 "¥" 符号，并转为 Double
                 it.totalAmount.replace("¥", "").toDoubleOrNull() ?: 0.0
             }
         }
@@ -201,24 +197,6 @@ class AccountingViewModel @Inject constructor(
         }
     }
 
-    /* 辅助方法 */
-    private fun processFilter(items: List<UiModel>): List<UiModel> {
-        return items
-            .filter { item ->
-                val date = parseDate(item.date)
-                date.time >= _uiState.value.filter.startDate.time &&
-                        date.time <= _uiState.value.filter.endDate.time &&
-                        item.orderNumber.contains(_uiState.value.filter.orderNumberQuery, true)
-            }
-            .sortedWith(
-                when (_uiState.value.filter.sortType) {
-                    SortType.DATE_ASC -> compareBy { parseDate(it.date) }
-                    SortType.DATE_DESC -> compareByDescending { parseDate(it.date) }
-                    SortType.AMOUNT_ASC -> compareBy { it.totalAmount.toDouble() }
-                    SortType.AMOUNT_DESC -> compareByDescending { it.totalAmount.toDouble() }
-                }
-            )
-    }
 
     private fun parseDate(dateStr: String): Date {
         return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateStr) ?: Date()
@@ -228,9 +206,9 @@ class AccountingViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 repository.exportData(context, uri)
-                showToast(context, "导出成功")
+                showToast("导出成功")
             } catch (e: Exception) {
-                showToast(context, "导出失败: ${e.message}")
+                showToast("导出失败: ${e.message}")
             }
         }
     }
@@ -239,15 +217,26 @@ class AccountingViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 repository.importData(context, uri)
-                showToast(context, "导入成功")
+                showToast("导入成功")
             } catch (e: Exception) {
-                showToast(context, "导入失败: ${e.message}")
+                showToast("导入失败: ${e.message}")
             }
         }
     }
 
-    private fun showToast(context: Context, message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    private fun getPersistedSortType(context: Context): SortType {
+        val prefs = context.getSharedPreferences("sort_prefs", Context.MODE_PRIVATE)
+        return try {
+            SortType.valueOf(prefs.getString("sort_type", SortType.DATE_DESC.name)!!)
+        } catch (e: Exception) {
+            SortType.DATE_DESC
+        }
+    }
+
+    private fun persistSortType(sortType: SortType) {
+        context.getSharedPreferences("sort_prefs", Context.MODE_PRIVATE).edit {
+            putString("sort_type", sortType.name)
+        }
     }
 
 
