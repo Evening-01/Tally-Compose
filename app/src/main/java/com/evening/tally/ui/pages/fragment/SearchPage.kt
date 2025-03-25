@@ -61,6 +61,7 @@ fun SearchPage(viewModel: AccountingViewModel = hiltViewModel()) {
     val focusRequester = remember { FocusRequester() }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+
     // 搜索防抖处理
     LaunchedEffect(searchText) {
         delay(500)

@@ -15,5 +15,4 @@ interface AccountingRepository {
     suspend fun exportData(context: Context, uri: Uri)
     suspend fun importData(context: Context, uri: Uri)
     fun getItemsByDateRange(start: Date, end: Date): Flow<List<AccountingItem>>
-    suspend fun searchItems(query: String, isWholeWord: Boolean): List<AccountingItem>
 }

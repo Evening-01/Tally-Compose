@@ -170,15 +170,42 @@ class AccountingViewModel @Inject constructor(
         }
     }
 
-    // 搜索方法
     fun searchItems(query: String, isWholeWord: Boolean) {
-        _uiState.update { it.copy(isSearchLoading = true, searchError = null) }
-        viewModelScope.launch(Dispatchers.IO) {
+        _uiState.update {
+            it.copy(
+                isSearchLoading = true,
+                searchError = null
+            )
+        }
+
+        viewModelScope.launch(Dispatchers.Default) {
             try {
-                val items = repository.searchItems(query, isWholeWord).map { it.toUiModel() }
+                val filtered = _uiState.value.items.filter { item ->
+                    listOf(
+                        item.date,
+                        item.orderNumber,
+                        item.diameter,
+                        item.thickness,
+                        item.length,
+                        item.piecesPerBundle,
+                        item.bundleWeight,
+                        item.totalBundles,
+                        item.totalPieces,
+                        item.totalWeight,
+                        item.unitPrice,
+                        item.totalAmount
+                    ).any { field ->
+                        when {
+                            query.isBlank() -> true
+                            isWholeWord -> field.equals(query, true)
+                            else -> field.contains(query, true)
+                        }
+                    }
+                }
+
                 _uiState.update {
                     it.copy(
-                        searchResults = items,
+                        searchResults = filtered,
                         isSearchLoading = false
                     )
                 }

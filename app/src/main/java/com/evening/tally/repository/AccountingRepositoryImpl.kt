@@ -66,12 +66,4 @@ class AccountingRepositoryImpl @Inject constructor(
             throw e
         }
     }
-
-    override suspend fun searchItems(query: String, isWholeWord: Boolean): List<AccountingItem> {
-        return if (isWholeWord) {
-            dao.searchExact(query)
-        } else {
-            dao.searchFuzzy("%$query%") // 添加通配符进行模糊查询
-        }
-    }
 }
