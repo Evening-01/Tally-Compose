@@ -5,6 +5,7 @@ object Route {
 
     const val DATA = "data"
     const val SETTING = "setting"
+    const val SEARCH = "search"
 
 
     const val DATA_LOCAL_MANAGER = "data_local_manager"

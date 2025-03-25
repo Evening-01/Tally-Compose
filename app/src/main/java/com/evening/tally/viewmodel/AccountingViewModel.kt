@@ -40,7 +40,10 @@ class AccountingViewModel @Inject constructor(
         val showDatePicker: Boolean = false,
         val showFilterSheet: Boolean = false,
         val selectedDate: Long = System.currentTimeMillis(),
-        val selectedSortType: SortType = SortType.DATE_DESC
+        val selectedSortType: SortType = SortType.DATE_DESC,
+        val searchResults: List<UiModel> = emptyList(),
+        val isSearchLoading: Boolean = false,
+        val searchError: String? = null
     )
 
     private val _uiState = MutableStateFlow(UiState())
@@ -167,6 +170,28 @@ class AccountingViewModel @Inject constructor(
         }
     }
 
+    // 搜索方法
+    fun searchItems(query: String, isWholeWord: Boolean) {
+        _uiState.update { it.copy(isSearchLoading = true, searchError = null) }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val items = repository.searchItems(query, isWholeWord).map { it.toUiModel() }
+                _uiState.update {
+                    it.copy(
+                        searchResults = items,
+                        isSearchLoading = false
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isSearchLoading = false,
+                        searchError = "搜索失败: ${e.localizedMessage}"
+                    )
+                }
+            }
+        }
+    }
 
     // 根据 FilterState 中的 sortType 进行排序
     private fun applySortToItems(items: List<UiModel>): List<UiModel> {

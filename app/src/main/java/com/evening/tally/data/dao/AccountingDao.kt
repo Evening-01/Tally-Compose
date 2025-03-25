@@ -34,4 +34,10 @@ interface AccountingDao {
 
     @Query("SELECT * FROM accounting_items WHERE date BETWEEN :start AND :end ORDER BY date DESC")
     fun getItemsByDateRange(start: Date, end: Date): Flow<List<AccountingItem>>
+
+    @Query("SELECT * FROM accounting_items WHERE orderNumber = :query OR diameter = :query")
+    suspend fun searchExact(query: String): List<AccountingItem>
+
+    @Query("SELECT * FROM accounting_items WHERE orderNumber LIKE :query OR diameter LIKE :query")
+    suspend fun searchFuzzy(query: String): List<AccountingItem>
 }

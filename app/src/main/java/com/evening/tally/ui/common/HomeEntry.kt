@@ -12,6 +12,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +25,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.evening.tally.R
 import com.evening.tally.data.preference.LocalDarkTheme
 import com.evening.tally.ext.isFirstLaunch
 import com.evening.tally.ext.string
@@ -33,6 +36,7 @@ import com.evening.tally.ui.pages.fragment.DarkThemePage
 import com.evening.tally.ui.pages.fragment.DataLocalManagerPage
 import com.evening.tally.ui.pages.other.StartPage
 import com.evening.tally.ui.screens.DataScreen
+import com.evening.tally.ui.pages.fragment.SearchPage
 import com.evening.tally.ui.screens.SettingScreen
 import com.evening.tally.ui.theme.AppTheme
 import com.evening.tally.viewmodel.AccountingViewModel
@@ -55,28 +59,32 @@ fun HomeEntry() {
 
     val useDarkTheme = LocalDarkTheme.current.isDarkTheme()
 
-    AppTheme(useDarkTheme = useDarkTheme) {
-        rememberSystemUiController().run {
-            setStatusBarColor(Color.Transparent, !useDarkTheme)
-            setSystemBarsColor(Color.Transparent, !useDarkTheme)
-            setNavigationBarColor(Color.Transparent, !useDarkTheme)
-        }
-        Scaffold(bottomBar = {
-            //只要当页面为首页,才展示底部菜单栏
-            if (currentDestination?.hierarchy?.any { routes.contains(it.route) } == true) {
-                BottomNavigationBar(navController = navController)
+    CompositionLocalProvider(LocalRootNavController provides navController) {
+        AppTheme(useDarkTheme = useDarkTheme) {
+            rememberSystemUiController().run {
+                setStatusBarColor(Color.Transparent, !useDarkTheme)
+                setSystemBarsColor(Color.Transparent, !useDarkTheme)
+                setNavigationBarColor(Color.Transparent, !useDarkTheme)
             }
+            Scaffold(bottomBar = {
+                //只要当页面为首页,才展示底部菜单栏
+                if (currentDestination?.hierarchy?.any { routes.contains(it.route) } == true) {
+                    BottomNavigationBar(navController = navController)
+                }
 //            BottomNavigationBar(navController = navController)
-        }, content = { padding ->
-            NavHostContainer(navController = navController, padding = padding)
-        })
+            }, content = { padding ->
+                NavHostContainer(navController = navController, padding = padding)
+            })
+        }
     }
 }
+
+val LocalRootNavController = compositionLocalOf<NavHostController> { error(R.string.nav_host_controller_not_found.string) }
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
 
-    NavigationBar() {
+    NavigationBar {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         bottomNavScreenList.forEach { navItem ->
@@ -127,6 +135,10 @@ fun NavHostContainer(
 
         composable(Route.SETTING) {
             SettingScreen(navController = navController)
+        }
+
+        animatedComposable(Route.SEARCH) {
+            SearchPage()
         }
 
         animatedComposable(Route.DATA_LOCAL_MANAGER) {
